@@ -6,6 +6,7 @@ Personal Obsidian commands for creating notes from the templates already in `/Us
 
 - `New Person` creates a note in `People/` from `Templates/Person.md`.
 - `New Book` creates a note in `Books/` from `Templates/New book.md`.
+- `Open Latest Weekly Plan` opens the newest weekly plan note from `Log/`.
 
 ## Automatic Daily Notes
 
@@ -32,5 +33,6 @@ The initial note/template mappings live in `src/config.ts`:
 - `People` + `Templates/Person.md`
 - `Books` + `Templates/New book.md`
 - `Daily`
+- `Log` + `Weekly Plan`
 
 Update those values there whenever you want to add more personal note types or rename paths.

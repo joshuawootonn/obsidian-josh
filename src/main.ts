@@ -1,10 +1,16 @@
 import { Notice, Plugin, TFile, normalizePath } from "obsidian";
 
-import { DAILY_NOTE_FOLDER, PERSONAL_COMMANDS } from "./config";
+import {
+  DAILY_NOTE_FOLDER,
+  PERSONAL_COMMANDS,
+  WEEKLY_PLAN_FOLDER,
+  WEEKLY_PLAN_TITLE_FRAGMENT,
+} from "./config";
 import { ensureMissingDailyNotes } from "./dailyNoteLinks";
 import { resolveDailyTemplateContents } from "./dailyNoteTemplate";
 import { createNoteFromTemplate } from "./noteFactory";
 import { createObsidianAdapter, ensureFolderExists } from "./obsidianAdapter";
+import { findLatestWeeklyPlan } from "./weeklyPlan";
 
 export default class JoshPersonalPlugin extends Plugin {
   private dailyNoteSyncTimer: number | null = null;
@@ -31,6 +37,34 @@ export default class JoshPersonalPlugin extends Plugin {
         },
       });
     }
+
+    this.addCommand({
+      id: "open-latest-weekly-plan",
+      name: "Open Latest Weekly Plan",
+      callback: async () => {
+        try {
+          const latestWeeklyPlan = findLatestWeeklyPlan(
+            this.app.vault.getMarkdownFiles(),
+            WEEKLY_PLAN_FOLDER,
+            WEEKLY_PLAN_TITLE_FRAGMENT,
+          );
+
+          if (!latestWeeklyPlan) {
+            new Notice("No weekly plan note found.");
+            return;
+          }
+
+          const leaf = this.app.workspace.getMostRecentLeaf() ?? this.app.workspace.getLeaf(true);
+          await leaf.openFile(latestWeeklyPlan);
+        } catch (error) {
+          const message =
+            error instanceof Error ? error.message : "Unknown error opening weekly plan";
+
+          console.error("[Josh Personal Plugin] Open Latest Weekly Plan failed", error);
+          new Notice(`Open Latest Weekly Plan failed: ${message}`);
+        }
+      },
+    });
 
     this.registerEvent(
       this.app.workspace.on("editor-change", (editor) => {

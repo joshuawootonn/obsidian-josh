@@ -6,6 +6,8 @@ export interface PersonalCommandDefinition extends NoteTypeDefinition {
 }
 
 export const DAILY_NOTE_FOLDER = "Daily";
+export const WEEKLY_PLAN_FOLDER = "Log";
+export const WEEKLY_PLAN_TITLE_FRAGMENT = "Weekly Plan";
 
 export const PERSONAL_COMMANDS: PersonalCommandDefinition[] = [
   {
