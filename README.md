@@ -5,7 +5,8 @@ Personal Obsidian commands for creating notes from the templates already in `/Us
 ## Commands
 
 - `New Person` creates a note in `People/` from `Templates/Person.md`.
-- `New Book` creates a note in `Books/` from `Templates/New book.md`.
+- `New Book` prompts for a title, creates `Books/<Title>/`, and creates `Books/<Title>/<Title>.md` from `Templates/New book.md`.
+- `New Chapter` lets you pick a top-level folder in `Books/`, then creates a chapter note there from `Templates/Chapter.md`.
 - `Open Latest Weekly Plan` opens the newest weekly plan note from `Log/`.
 
 ## Automatic Daily Notes
@@ -26,12 +27,20 @@ Personal Obsidian commands for creating notes from the templates already in `/Us
 - Run `pnpm test` for the `Vitest` suite.
 - Run `pnpm check` to typecheck and run tests together.
 
+## Book Migration
+
+- Run `pnpm migrate:books:dry-run` first to preview which flat book notes would move to folder-based roots like `Books/<Book>/<Book>.md`.
+- Run `pnpm migrate:books` to apply the migration after reviewing the dry run.
+- The migration rewrites wiki-links and embeds across the vault for moved book notes, and leaves ambiguous basename-only links unchanged.
+- By default, the script skips `Books/Books.md`. You can pass extra exclusions with `pnpm migrate:books -- --dry-run --exclude "Some Book"`.
+
 ## Hardcoded Paths
 
 The initial note/template mappings live in `src/config.ts`:
 
 - `People` + `Templates/Person.md`
 - `Books` + `Templates/New book.md`
+- `Books/*` + `Templates/Chapter.md`
 - `Daily`
 - `Log` + `Weekly Plan`
 

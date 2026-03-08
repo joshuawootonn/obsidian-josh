@@ -10,7 +10,9 @@
     "build": "vite build",
     "test": "vitest run",
     "test:watch": "vitest",
-    "check": "tsc --noEmit && vitest run"
+    "check": "tsc --noEmit && vitest run",
+    "migrate:books": "tsx scripts/migrate-books-to-folders.ts --vault /Users/work/josh",
+    "migrate:books:dry-run": "tsx scripts/migrate-books-to-folders.ts --vault /Users/work/josh --dry-run"
   },
   "pnpm": {
     "onlyBuiltDependencies": [
@@ -20,6 +22,7 @@
   "devDependencies": {
     "@types/node": "^25.3.5",
     "obsidian": "^1.12.3",
+    "tsx": "^4.21.0",
     "typescript": "^5.9.3",
     "vite": "^7.3.1",
     "vite-plugin-static-copy": "^3.2.0",
