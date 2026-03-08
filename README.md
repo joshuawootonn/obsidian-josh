@@ -27,13 +27,6 @@ Personal Obsidian commands for creating notes from the templates already in `/Us
 - Run `pnpm test` for the `Vitest` suite.
 - Run `pnpm check` to typecheck and run tests together.
 
-## Book Migration
-
-- Run `pnpm migrate:books:dry-run` first to preview which flat book notes would move to folder-based roots like `Books/<Book>/<Book>.md`.
-- Run `pnpm migrate:books` to apply the migration after reviewing the dry run.
-- The migration rewrites wiki-links and embeds across the vault for moved book notes, and leaves ambiguous basename-only links unchanged.
-- By default, the script skips `Books/Books.md`. You can pass extra exclusions with `pnpm migrate:books -- --dry-run --exclude "Some Book"`.
-
 ## Hardcoded Paths
 
 The initial note/template mappings live in `src/config.ts`:
