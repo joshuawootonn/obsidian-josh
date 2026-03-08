@@ -7,6 +7,12 @@ Personal Obsidian commands for creating notes from the templates already in `/Us
 - `New Person` creates a note in `People/` from `Templates/Person.md`.
 - `New Book` creates a note in `Books/` from `Templates/New book.md`.
 
+## Automatic Daily Notes
+
+- When a note contains an unresolved `[[YYYY-MM-DD]]` link, the plugin automatically creates `Daily/YYYY-MM-DD.md`.
+- This works well with `nldates-obsidian`, so typing something like `@today` and accepting `[[2026-03-08]]` will back that link with a real note in `Daily/`.
+- If `Periodic Notes` has a daily template configured, the plugin copies that template into the new daily note. If not, it falls back to Obsidian core daily-note template settings, then finally to an empty note.
+
 ## Development
 
 1. Run `pnpm install`.
@@ -25,5 +31,6 @@ The initial note/template mappings live in `src/config.ts`:
 
 - `People` + `Templates/Person.md`
 - `Books` + `Templates/New book.md`
+- `Daily`
 
 Update those values there whenever you want to add more personal note types or rename paths.

@@ -27,7 +27,7 @@ export function createObsidianAdapter(app: App): NoteFactoryAdapter<TFile> {
   };
 }
 
-async function ensureFolderExists(app: App, folderPath: string): Promise<void> {
+export async function ensureFolderExists(app: App, folderPath: string): Promise<void> {
   const normalizedFolderPath = normalizePath(folderPath);
 
   if (!normalizedFolderPath) {

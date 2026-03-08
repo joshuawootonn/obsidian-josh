@@ -5,6 +5,8 @@ export interface PersonalCommandDefinition extends NoteTypeDefinition {
   commandName: string;
 }
 
+export const DAILY_NOTE_FOLDER = "Daily";
+
 export const PERSONAL_COMMANDS: PersonalCommandDefinition[] = [
   {
     commandId: "new-person",
