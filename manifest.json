@@ -1,0 +1,9 @@
+{
+  "id": "josh-personal-plugin",
+  "name": "Josh Personal Plugin",
+  "version": "0.1.0",
+  "minAppVersion": "1.5.0",
+  "description": "Personal commands for creating notes from Josh's preferred vault templates.",
+  "author": "Josh",
+  "isDesktopOnly": false
+}
