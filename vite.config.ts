@@ -5,8 +5,7 @@ import { defineConfig } from "vite";
 import { viteStaticCopy } from "vite-plugin-static-copy";
 
 const pluginId = "josh-personal-plugin";
-const vaultPath = "/Users/work/josh";
-const vaultPluginDirectory = path.join(vaultPath, ".obsidian", "plugins", pluginId);
+const buildOutputDirectory = path.resolve(__dirname, ".obsidian", "plugins", pluginId);
 const external = [
   "obsidian",
   "electron",
@@ -29,7 +28,7 @@ export default defineConfig({
       formats: ["cjs"],
       fileName: () => "main.js",
     },
-    outDir: vaultPluginDirectory,
+    outDir: buildOutputDirectory,
     emptyOutDir: true,
     sourcemap: "inline",
     minify: false,

@@ -1,6 +1,6 @@
 # Josh Personal Plugin
 
-Personal Obsidian commands for creating notes from the templates already in `/Users/work/josh`.
+Personal Obsidian commands for creating notes from the templates in your Obsidian vault.
 
 ## Commands
 
@@ -18,14 +18,22 @@ Personal Obsidian commands for creating notes from the templates already in `/Us
 ## Development
 
 1. Run `pnpm install`.
-2. Run `pnpm dev` to watch and build directly into `/Users/work/josh/.obsidian/plugins/josh-personal-plugin`.
-3. In Obsidian, enable the `Josh Personal Plugin` community plugin in the target vault.
+2. Run `pnpm setup:vault -- /absolute/path/to/your/vault`.
+3. Run `pnpm dev` to watch and build into this repo's local plugin output.
+4. In Obsidian, enable the `Josh Personal Plugin` community plugin in the target vault.
 
 ## Checks
 
 - Run `pnpm build` for a one-off build.
 - Run `pnpm test` for the `Vitest` suite.
 - Run `pnpm check` to typecheck and run tests together.
+
+## Local Vault Setup
+
+- `pnpm setup:vault -- /absolute/path/to/your/vault` stores the vault path in `.obsidian-dev.json`.
+- The setup command creates a symlink from `<vault>/.obsidian/plugins/josh-personal-plugin` to this repo's local build output at `.obsidian/plugins/josh-personal-plugin`.
+- If you run `pnpm setup:vault` with no path later, it reuses the saved vault path.
+- If the target plugin path already exists as a real directory, the setup command renames it to a timestamped backup and then creates the symlink.
 
 ## Hardcoded Paths
 

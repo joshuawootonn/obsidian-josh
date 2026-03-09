@@ -6,6 +6,7 @@
   "type": "module",
   "main": "main.js",
   "scripts": {
+    "setup:vault": "node scripts/setup-vault.mjs",
     "dev": "vite build --watch --mode development",
     "build": "vite build",
     "test": "vitest run",

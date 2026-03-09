@@ -4,6 +4,9 @@ default:
 install:
   pnpm install
 
+setup-vault vault_path="":
+  if [ -n "{{vault_path}}" ]; then pnpm run setup:vault -- "{{vault_path}}"; else pnpm run setup:vault; fi
+
 dev:
   pnpm dev
 
