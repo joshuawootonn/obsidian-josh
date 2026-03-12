@@ -8,6 +8,9 @@ export interface PersonalCommandDefinition extends NoteTypeDefinition {
 export const DAILY_NOTE_FOLDER = "Daily";
 export const WEEKLY_PLAN_FOLDER = "Log";
 export const WEEKLY_PLAN_TITLE_FRAGMENT = "Weekly Plan";
+export const MONTHLY_REVIEW_TAG = "Review---Process";
+export const QUARTERLY_REVIEW_TAG = "Quarterly-Planning---Process";
+export const HOME_NOTE_PATH = "Home.md";
 export const BOOKS_FOLDER = "Books";
 export const BOOK_TEMPLATE_PATH = "Templates/New book.md";
 export const CHAPTER_TEMPLATE_PATH = "Templates/Chapter.md";

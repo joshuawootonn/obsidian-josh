@@ -64,4 +64,30 @@ describe("findLatestWeeklyPlan", () => {
 
     expect(result).toBeNull();
   });
+
+  it("can find latest monthly review notes by title fragment", () => {
+    const result = findLatestWeeklyPlan(
+      [
+        file("Log/2026-01-31 - Monthly Review.md", 10),
+        file("Log/2026-02-28 - Monthly Review.md", 5),
+      ],
+      "Log",
+      "Monthly Review",
+    );
+
+    expect(result?.path).toBe("Log/2026-02-28 - Monthly Review.md");
+  });
+
+  it("can find latest quarterly review notes by title fragment", () => {
+    const result = findLatestWeeklyPlan(
+      [
+        file("Log/2025-10-01 - Quarterly Review.md", 10),
+        file("Log/2026-01-01 - Quarterly Review.md", 5),
+      ],
+      "Log",
+      "Quarterly Review",
+    );
+
+    expect(result?.path).toBe("Log/2026-01-01 - Quarterly Review.md");
+  });
 });

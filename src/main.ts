@@ -16,7 +16,10 @@ import {
   DAILY_NOTE_FOLDER,
   DEFAULT_BOOK_TITLE,
   DEFAULT_CHAPTER_TITLE,
+  HOME_NOTE_PATH,
+  MONTHLY_REVIEW_TAG,
   PERSONAL_COMMANDS,
+  QUARTERLY_REVIEW_TAG,
   WEEKLY_PLAN_FOLDER,
   WEEKLY_PLAN_TITLE_FRAGMENT,
 } from "./config";
@@ -112,6 +115,29 @@ export default class JoshPersonalPlugin extends Plugin {
     });
 
     this.addCommand({
+      id: "open-home",
+      name: "Open Home",
+      callback: async () => {
+        try {
+          const homeFile = this.app.vault.getAbstractFileByPath(normalizePath(HOME_NOTE_PATH));
+
+          if (!(homeFile instanceof TFile)) {
+            new Notice(`Home note not found at ${HOME_NOTE_PATH}.`);
+            return;
+          }
+
+          const leaf = this.app.workspace.getMostRecentLeaf() ?? this.app.workspace.getLeaf(true);
+          await leaf.openFile(homeFile);
+        } catch (error) {
+          const message = error instanceof Error ? error.message : "Unknown error opening home note";
+
+          console.error("[Josh Personal Plugin] Open Home failed", error);
+          new Notice(`Open Home failed: ${message}`);
+        }
+      },
+    });
+
+    this.addCommand({
       id: "open-latest-weekly-plan",
       name: "Open Latest Weekly Plan",
       callback: async () => {
@@ -135,6 +161,54 @@ export default class JoshPersonalPlugin extends Plugin {
 
           console.error("[Josh Personal Plugin] Open Latest Weekly Plan failed", error);
           new Notice(`Open Latest Weekly Plan failed: ${message}`);
+        }
+      },
+    });
+
+    this.addCommand({
+      id: "open-latest-monthly-review",
+      name: "Open Latest Monthly Review",
+      callback: async () => {
+        try {
+          const latestMonthlyReview = this.findLatestNoteByTag(MONTHLY_REVIEW_TAG);
+
+          if (!latestMonthlyReview) {
+            new Notice(`No monthly review note found with tag #${MONTHLY_REVIEW_TAG}.`);
+            return;
+          }
+
+          const leaf = this.app.workspace.getMostRecentLeaf() ?? this.app.workspace.getLeaf(true);
+          await leaf.openFile(latestMonthlyReview);
+        } catch (error) {
+          const message =
+            error instanceof Error ? error.message : "Unknown error opening monthly review";
+
+          console.error("[Josh Personal Plugin] Open Latest Monthly Review failed", error);
+          new Notice(`Open Latest Monthly Review failed: ${message}`);
+        }
+      },
+    });
+
+    this.addCommand({
+      id: "open-latest-quarterly-review",
+      name: "Open Latest Quarterly Review",
+      callback: async () => {
+        try {
+          const latestQuarterlyReview = this.findLatestNoteByTag(QUARTERLY_REVIEW_TAG);
+
+          if (!latestQuarterlyReview) {
+            new Notice(`No quarterly review note found with tag #${QUARTERLY_REVIEW_TAG}.`);
+            return;
+          }
+
+          const leaf = this.app.workspace.getMostRecentLeaf() ?? this.app.workspace.getLeaf(true);
+          await leaf.openFile(latestQuarterlyReview);
+        } catch (error) {
+          const message =
+            error instanceof Error ? error.message : "Unknown error opening quarterly review";
+
+          console.error("[Josh Personal Plugin] Open Latest Quarterly Review failed", error);
+          new Notice(`Open Latest Quarterly Review failed: ${message}`);
         }
       },
     });
@@ -251,6 +325,40 @@ export default class JoshPersonalPlugin extends Plugin {
       .filter((file): file is TFolder => file instanceof TFolder)
       .filter((folder) => topLevelFolderPathSet.has(folder.path))
       .sort((left, right) => left.name.localeCompare(right.name));
+  }
+
+  private findLatestNoteByTag(tag: string): TFile | null {
+    const taggedEntries = this.app.vault.getMarkdownFiles().map((file) => ({
+      file,
+      path: file.path,
+      basename: file.basename,
+      stat: file.stat,
+      tags: this.getNormalizedFileTags(file),
+    }));
+    const latestEntry = findLatestTaggedEntry(taggedEntries, tag);
+
+    return latestEntry?.file ?? null;
+  }
+
+  private getNormalizedFileTags(file: TFile): string[] {
+    const cache = this.app.metadataCache.getFileCache(file);
+
+    if (!cache) {
+      return [];
+    }
+
+    const inlineTags = (cache.tags ?? []).map((tagCache) => tagCache.tag);
+    const frontmatterTags = extractFrontmatterTags(
+      cache.frontmatter as Record<string, unknown> | null | undefined,
+    );
+
+    return [
+      ...new Set(
+        [...inlineTags, ...frontmatterTags]
+          .map((tagValue) => normalizeTag(tagValue))
+          .filter((tagValue) => tagValue.length > 0),
+      ),
+    ];
   }
 }
 
@@ -398,4 +506,84 @@ async function waitForModalTransition(): Promise<void> {
   await waitForNextUiTurn();
   await new Promise<void>((resolve) => window.requestAnimationFrame(() => resolve()));
   await new Promise<void>((resolve) => window.requestAnimationFrame(() => resolve()));
+}
+
+interface TaggedEntryLike {
+  path: string;
+  basename: string;
+  stat: {
+    mtime: number;
+  };
+  tags: string[];
+}
+
+function findLatestTaggedEntry<Entry extends TaggedEntryLike>(
+  entries: Entry[],
+  tag: string,
+): Entry | null {
+  const normalizedTag = normalizeTag(tag);
+
+  if (!normalizedTag) {
+    return null;
+  }
+
+  const matchingEntries = entries.filter((entry) =>
+    entry.tags.some((tagValue) => normalizeTag(tagValue) === normalizedTag),
+  );
+
+  if (matchingEntries.length === 0) {
+    return null;
+  }
+
+  return [...matchingEntries].sort(compareDatedEntries)[0] ?? null;
+}
+
+function compareDatedEntries(left: TaggedEntryLike, right: TaggedEntryLike): number {
+  const leftDate = extractFirstIsoDate(left.basename);
+  const rightDate = extractFirstIsoDate(right.basename);
+
+  if (leftDate !== rightDate) {
+    return rightDate.localeCompare(leftDate);
+  }
+
+  if (left.stat.mtime !== right.stat.mtime) {
+    return right.stat.mtime - left.stat.mtime;
+  }
+
+  return right.path.localeCompare(left.path);
+}
+
+function extractFirstIsoDate(value: string): string {
+  const match = value.match(/\d{4}-\d{1,2}-\d{1,2}/);
+
+  if (!match) {
+    return "";
+  }
+
+  const [year, month, day] = match[0].split("-");
+
+  return [year, month.padStart(2, "0"), day.padStart(2, "0")].join("-");
+}
+
+function normalizeTag(value: string): string {
+  return value.trim().replace(/^#/, "").toLowerCase();
+}
+
+function extractFrontmatterTags(
+  frontmatter: Record<string, unknown> | null | undefined,
+): string[] {
+  const rawTagValue = frontmatter?.tags ?? frontmatter?.tag;
+
+  if (Array.isArray(rawTagValue)) {
+    return rawTagValue.filter((tagValue): tagValue is string => typeof tagValue === "string");
+  }
+
+  if (typeof rawTagValue === "string") {
+    return rawTagValue
+      .split(",")
+      .map((value) => value.trim())
+      .filter((value) => value.length > 0);
+  }
+
+  return [];
 }

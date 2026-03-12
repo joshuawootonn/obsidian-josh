@@ -7,7 +7,10 @@ Personal Obsidian commands for creating notes from the templates in your Obsidia
 - `New Person` creates a note in `People/` from `Templates/Person.md`.
 - `New Book` prompts for a title, creates `Books/<Title>/`, and creates `Books/<Title>/<Title>.md` from `Templates/New book.md`.
 - `New Chapter` lets you pick a top-level folder in `Books/`, then creates a chapter note there from `Templates/Chapter.md`.
+- `Open Home` opens the note at `Home.md` (configurable via `HOME_NOTE_PATH` in `src/config.ts`).
 - `Open Latest Weekly Plan` opens the newest weekly plan note from `Log/`.
+- `Open Latest Monthly Review` opens the newest note tagged `#Review---Process`.
+- `Open Latest Quarterly Review` opens the newest note tagged `#Quarterly-Planning---Process`.
 
 ## Automatic Daily Notes
 
@@ -18,7 +21,7 @@ Personal Obsidian commands for creating notes from the templates in your Obsidia
 ## Development
 
 1. Run `pnpm install`.
-2. Run `pnpm setup:vault -- /absolute/path/to/your/vault`.
+2. Run `just setup-vault /absolute/path/to/your/vault`.
 3. Run `pnpm dev` to watch and build into this repo's local plugin output.
 4. In Obsidian, enable the `Josh Personal Plugin` community plugin in the target vault.
 
@@ -28,12 +31,19 @@ Personal Obsidian commands for creating notes from the templates in your Obsidia
 - Run `pnpm test` for the `Vitest` suite.
 - Run `pnpm check` to typecheck and run tests together.
 
-## Local Vault Setup
+## Local vs Synced Mode
 
-- `pnpm setup:vault -- /absolute/path/to/your/vault` stores the vault path in `.obsidian-dev.json`.
-- The setup command creates a symlink from `<vault>/.obsidian/plugins/josh-personal-plugin` to this repo's local build output at `.obsidian/plugins/josh-personal-plugin`.
-- If you run `pnpm setup:vault` with no path later, it reuses the saved vault path.
-- If the target plugin path already exists as a real directory, the setup command renames it to a timestamped backup and then creates the symlink.
+- Local mode uses a symlink from `<vault>/.obsidian/plugins/josh-personal-plugin` to this repo's local output at `.obsidian/plugins/josh-personal-plugin`.
+- Synced mode uses a normal plugin directory in the vault so Obsidian Sync can manage it directly.
+- Plugin backup directories are stored at `<vault>/.obsidian/plugin-backups/josh-personal-plugin/` to avoid duplicate plugin-id directories in `.obsidian/plugins/`.
+
+### Common commands
+
+- `just setup-vault /absolute/path/to/your/vault` sets or updates the stored vault path in `.obsidian-dev.json` and switches to local mode.
+- `just use-local` switches back to local mode using the cached vault path from `.obsidian-dev.json`.
+- `just use-synced` restores the most recent synced backup directory using the cached vault path.
+- `just plugin-status` prints the current mode and plugin path details using the cached vault path.
+- `just dev` runs the local build watcher while using local mode.
 
 ## Hardcoded Paths
 
@@ -42,7 +52,9 @@ The initial note/template mappings live in `src/config.ts`:
 - `People` + `Templates/Person.md`
 - `Books` + `Templates/New book.md`
 - `Books/*` + `Templates/Chapter.md`
+- `Home.md`
 - `Daily`
 - `Log` + `Weekly Plan`
+- Tags `Review---Process` + `Quarterly-Planning---Process`
 
 Update those values there whenever you want to add more personal note types or rename paths.

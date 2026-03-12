@@ -7,6 +7,9 @@
   "main": "main.js",
   "scripts": {
     "setup:vault": "node scripts/setup-vault.mjs",
+    "plugin:status": "node scripts/plugin-source.mjs status",
+    "plugin:use-local": "node scripts/plugin-source.mjs use-local",
+    "plugin:use-synced": "node scripts/plugin-source.mjs use-synced",
     "dev": "vite build --watch --mode development",
     "build": "vite build",
     "test": "vitest run",
