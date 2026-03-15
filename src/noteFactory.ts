@@ -9,6 +9,7 @@ export interface NoteTypeDefinition {
 
 export interface NoteFactoryAdapter<FileRef> {
   getTemplateFile(path: string): FileRef | null;
+  getFile?(path: string): FileRef | null;
   read(file: FileRef): Promise<string>;
   exists(path: string): boolean;
   ensureFolder(path: string): Promise<void>;

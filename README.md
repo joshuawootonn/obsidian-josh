@@ -9,7 +9,9 @@ Personal Obsidian commands for creating notes from the templates in your Obsidia
 - `New Chapter` lets you pick a top-level folder in `Books/`, then creates a chapter note there from `Templates/Chapter.md`.
 - `Open Home` opens the note at `Home.md` (configurable via `HOME_NOTE_PATH` in `src/config.ts`).
 - `Open Latest Weekly Plan` opens the newest weekly plan note from `Log/`.
+- `Create Next Week Weekly Plan` creates next week's weekly plan in `Log/` from `Templates/Weekly Plan.md`, or opens it if it already exists.
 - `Open Latest Monthly Review` opens the newest note tagged `#Review---Process`.
+- `Create Next Month Monthly Review` creates next month's monthly review in `Log/` using the vault's month-year note pattern, like `April 2026.md`, or opens it if it already exists.
 - `Open Latest Quarterly Review` opens the newest note tagged `#Quarterly-Planning---Process`.
 
 ## Automatic Daily Notes

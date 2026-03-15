@@ -8,6 +8,10 @@ export function createObsidianAdapter(app: App): NoteFactoryAdapter<TFile> {
       const file = app.vault.getAbstractFileByPath(normalizePath(templatePath));
       return file instanceof TFile ? file : null;
     },
+    getFile(path) {
+      const file = app.vault.getAbstractFileByPath(normalizePath(path));
+      return file instanceof TFile ? file : null;
+    },
     read(file) {
       return app.vault.cachedRead(file);
     },

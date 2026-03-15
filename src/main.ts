@@ -17,10 +17,13 @@ import {
   DEFAULT_BOOK_TITLE,
   DEFAULT_CHAPTER_TITLE,
   HOME_NOTE_PATH,
+  MONTHLY_REVIEW_FOLDER,
   MONTHLY_REVIEW_TAG,
+  MONTHLY_REVIEW_TEMPLATE_PATH,
   PERSONAL_COMMANDS,
   QUARTERLY_REVIEW_TAG,
   WEEKLY_PLAN_FOLDER,
+  WEEKLY_PLAN_TEMPLATE_PATH,
   WEEKLY_PLAN_TITLE_FRAGMENT,
 } from "./config";
 import {
@@ -31,8 +34,10 @@ import {
 import { ensureMissingDailyNotes } from "./dailyNoteLinks";
 import { resolveDailyTemplateContents } from "./dailyNoteTemplate";
 import { createNoteFromTemplate } from "./noteFactory";
+import { createOrOpenNextMonthlyReview } from "./monthlyReviewNote";
 import { createObsidianAdapter, ensureFolderExists } from "./obsidianAdapter";
 import { findLatestWeeklyPlan } from "./weeklyPlan";
+import { createOrOpenNextWeeklyPlan } from "./weeklyPlanNote";
 
 export default class JoshPersonalPlugin extends Plugin {
   private dailyNoteSyncTimer: number | null = null;
@@ -166,6 +171,26 @@ export default class JoshPersonalPlugin extends Plugin {
     });
 
     this.addCommand({
+      id: "create-next-weekly-plan",
+      name: "Create Next Week Weekly Plan",
+      callback: async () => {
+        try {
+          await createOrOpenNextWeeklyPlan(adapter, {
+            folderPath: WEEKLY_PLAN_FOLDER,
+            templatePath: WEEKLY_PLAN_TEMPLATE_PATH,
+            title: WEEKLY_PLAN_TITLE_FRAGMENT,
+          });
+        } catch (error) {
+          const message =
+            error instanceof Error ? error.message : "Unknown error creating weekly plan";
+
+          console.error("[Josh Personal Plugin] Create Next Week Weekly Plan failed", error);
+          new Notice(`Create Next Week Weekly Plan failed: ${message}`);
+        }
+      },
+    });
+
+    this.addCommand({
       id: "open-latest-monthly-review",
       name: "Open Latest Monthly Review",
       callback: async () => {
@@ -185,6 +210,25 @@ export default class JoshPersonalPlugin extends Plugin {
 
           console.error("[Josh Personal Plugin] Open Latest Monthly Review failed", error);
           new Notice(`Open Latest Monthly Review failed: ${message}`);
+        }
+      },
+    });
+
+    this.addCommand({
+      id: "create-next-monthly-review",
+      name: "Create Next Month Monthly Review",
+      callback: async () => {
+        try {
+          await createOrOpenNextMonthlyReview(adapter, {
+            folderPath: MONTHLY_REVIEW_FOLDER,
+            templatePath: MONTHLY_REVIEW_TEMPLATE_PATH,
+          });
+        } catch (error) {
+          const message =
+            error instanceof Error ? error.message : "Unknown error creating monthly review";
+
+          console.error("[Josh Personal Plugin] Create Next Month Monthly Review failed", error);
+          new Notice(`Create Next Month Monthly Review failed: ${message}`);
         }
       },
     });
